@@ -1,0 +1,1061 @@
+<!DOCTYPE html> <!-- Menentukan tipe dokumen HTML5 -->
+<html lang="id"> <!-- Tag pembuka HTML dengan bahasa Indonesia -->
+<head> <!-- Bagian kepala dokumen -->
+    <meta charset="UTF-8"> <!-- Set karakter encoding ke UTF-8 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"> <!-- Mengatur viewport untuk responsivitas, mencegah scaling pengguna -->
+    <title>Sky Defender - Arcade Shooter with Assets</title> <!-- Judul halaman -->
+    <style> /* Memulai style CSS internal */
+        * { /* Selektor universal */
+            user-select: none; /* Mencegah seleksi teks oleh pengguna */
+            -webkit-tap-highlight-color: transparent; /* Menghilangkan highlight saat tap di perangkat iOS */
+            margin: 0; /* Menghapus margin */
+            padding: 0; /* Menghapus padding */
+            box-sizing: border-box; /* Mengatur perhitungan box model */
+        }
+
+        body { /* Style untuk body */
+            min-height: 100vh; /* Tinggi minimal 100% viewport */
+            background: linear-gradient(135deg, #0a0f2a, #0a1a3a); /* Background gradien diagonal */
+            display: flex; /* Menggunakan flexbox */
+            justify-content: center; /* Konten di tengah horizontal */
+            align-items: center; /* Konten di tengah vertikal */
+            font-family: 'Courier New', 'Segoe UI', monospace; /* Font monospace dengan fallback */
+            padding: 20px; /* Padding 20px di semua sisi */
+        }
+
+        /* ========== HALAMAN UTAMA (MENU) ========== */
+        .main-menu { /* Style untuk container menu utama */
+            position: fixed; /* Posisi tetap di layar */
+            top: 0; /* Posisi atas 0 */
+            left: 0; /* Posisi kiri 0 */
+            width: 100%; /* Lebar penuh */
+            height: 100%; /* Tinggi penuh */
+            background: radial-gradient(ellipse at center, #0a1a3a 0%, #030614 100%); /* Background gradien radial */
+            display: flex; /* Flexbox */
+            justify-content: center; /* Pusat horizontal */
+            align-items: center; /* Pusat vertikal */
+            z-index: 1000; /* Z-index tinggi agar di atas elemen lain */
+            transition: opacity 0.5s ease; /* Transisi opacity */
+        }
+
+        .menu-card { /* Style untuk kartu menu */
+            background: rgba(8, 20, 40, 0.9); /* Background semi-transparan gelap */
+            backdrop-filter: blur(12px); /* Efek blur latar belakang */
+            border-radius: 60px; /* Border radius besar */
+            padding: 40px 50px; /* Padding dalam */
+            text-align: center; /* Teks di tengah */
+            border: 2px solid #ffd966; /* Border kuning */
+            box-shadow: 0 0 50px rgba(255, 200, 50, 0.3); /* Bayangan glow kuning */
+            max-width: 90%; /* Lebar maksimal 90% */
+            width: 450px; /* Lebar default 450px */
+        }
+
+        .menu-card h1 { /* Style untuk judul di menu */
+            font-size: 3rem; /* Ukuran font 3rem */
+            color: #ffd966; /* Warna kuning */
+            text-shadow: 0 0 15px #ffaa33; /* Bayangan teks oranye */
+            margin-bottom: 15px; /* Margin bawah */
+            letter-spacing: 3px; /* Spasi huruf */
+        }
+
+        .menu-card .sub { /* Sub-judul di menu */
+            color: #aaddff; /* Warna biru muda */
+            font-size: 1rem; /* Ukuran font */
+            margin-bottom: 30px; /* Margin bawah */
+            border-bottom: 1px dashed #3e6b9e; /* Garis bawah putus-putus */
+            display: inline-block; /* Tampil inline-block */
+            padding-bottom: 8px; /* Padding bawah */
+        }
+
+        .menu-stats { /* Style untuk area statistik */
+            background: #030a1acc; /* Background gelap semi-transparan */
+            border-radius: 30px; /* Border radius */
+            padding: 15px; /* Padding */
+            margin: 20px 0; /* Margin vertikal */
+            text-align: left; /* Teks rata kiri */
+        }
+
+        .menu-stats p { /* Paragraf di statistik */
+            color: #c6e9ff; /* Warna teks */
+            margin: 8px 0; /* Margin vertikal */
+            font-size: 0.9rem; /* Ukuran font */
+        }
+
+        .menu-stats span { /* Span di statistik */
+            color: #ffd966; /* Warna kuning */
+            font-weight: bold; /* Tebal */
+        }
+
+        .menu-btn { /* Style tombol menu */
+            background: #ffb347; /* Background oranye */
+            border: none; /* Tanpa border */
+            font-size: 1.3rem; /* Ukuran font */
+            font-weight: bold; /* Tebal */
+            padding: 12px 30px; /* Padding */
+            border-radius: 60px; /* Border radius besar */
+            cursor: pointer; /* Kursor tangan */
+            font-family: inherit; /* Font warisan */
+            color: #1f3a3f; /* Warna teks */
+            width: 100%; /* Lebar penuh */
+            margin-top: 15px; /* Margin atas */
+            box-shadow: 0 5px 0 #a05e15; /* Bayangan tegas di bawah */
+            transition: 0.05s linear; /* Transisi cepat */
+        }
+
+        .menu-btn:active { /* State tombol saat ditekan */
+            transform: translateY(2px); /* Geser sedikit ke bawah */
+            box-shadow: 0 2px 0 #a05e15; /* Bayangan mengecil */
+        }
+
+        .menu-footer { /* Footer di menu */
+            margin-top: 25px; /* Margin atas */
+            font-size: 0.65rem; /* Ukuran font kecil */
+            color: #6d8faa; /* Warna biru keabuan */
+        }
+
+        /* ========== LOADING SCREEN ========== */
+        .loading-overlay { /* Style untuk overlay loading */
+            position: fixed; /* Posisi tetap */
+            top: 0; /* Atas */
+            left: 0; /* Kiri */
+            width: 100%; /* Lebar penuh */
+            height: 100%; /* Tinggi penuh */
+            background: rgba(0,0,0,0.9); /* Background hitam semi-transparan */
+            display: flex; /* Flexbox */
+            justify-content: center; /* Pusat horizontal */
+            align-items: center; /* Pusat vertikal */
+            z-index: 2000; /* Z-index di atas menu */
+            flex-direction: column; /* Arah kolom */
+        }
+
+        .loading-text { /* Teks loading */
+            color: #ffd966; /* Warna kuning */
+            font-size: 1.5rem; /* Ukuran font */
+            font-family: monospace; /* Font monospace */
+            margin-top: 20px; /* Margin atas */
+        }
+
+        .loading-bar { /* Bar loading */
+            width: 300px; /* Lebar */
+            height: 20px; /* Tinggi */
+            background: #333; /* Warna abu gelap */
+            border-radius: 10px; /* Border radius */
+            overflow: hidden; /* Sembunyikan overflow */
+            margin-top: 20px; /* Margin atas */
+        }
+
+        .loading-progress { /* Indikator progress */
+            height: 100%; /* Tinggi penuh */
+            background: #ffb347; /* Warna oranye */
+            width: 0%; /* Awal 0% */
+            transition: width 0.3s; /* Transisi lebar */
+        }
+
+        /* ========== GAME WRAPPER ========== */
+        .game-wrapper { /* Container game */
+            display: none; /* Sembunyikan awal */
+            background: #0b1a2e; /* Background biru gelap */
+            border-radius: 28px; /* Border radius */
+            padding: 20px 25px 25px 25px; /* Padding */
+            box-shadow: 0 25px 40px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.1); /* Bayangan luar & dalam */
+            border: 1px solid #3e6b9e; /* Border */
+            position: relative; /* Relatif */
+        }
+
+        canvas { /* Style untuk canvas game */
+            display: block; /* Tampil blok */
+            margin: 0 auto; /* Tengah horizontal */
+            border-radius: 18px; /* Border radius */
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5); /* Bayangan */
+            cursor: none; /* Sembunyikan kursor */
+            background: #0a1030; /* Background gelap */
+            width: 650px; /* Lebar */
+            height: 450px; /* Tinggi */
+            touch-action: none; /* Nonaktifkan aksi sentuh bawaan */
+        }
+
+        .info-panel { /* Panel informasi (skor, nyawa, dll) */
+            display: flex; /* Flexbox */
+            justify-content: space-between; /* Sebar di antara */
+            margin: 15px 5px 15px 5px; /* Margin */
+            gap: 12px; /* Jarak antar item */
+            flex-wrap: wrap; /* Bungkus jika sempit */
+        }
+
+        .info-box { /* Kotak info individu */
+            background: #030614cc; /* Background gelap semi-transparan */
+            backdrop-filter: blur(4px); /* Blur */
+            padding: 5px 12px; /* Padding */
+            border-radius: 40px; /* Border radius */
+            color: #c6e9ff; /* Warna teks */
+            font-weight: bold; /* Tebal */
+            font-size: 0.9rem; /* Ukuran font */
+            border: 1px solid #2f6e9e; /* Border */
+            flex: 1; /* Fleksibel */
+            text-align: center; /* Teks tengah */
+        }
+
+        .info-box span { /* Span dalam info-box (nilai) */
+            font-size: 1.3rem; /* Ukuran lebih besar */
+            font-weight: 800; /* Tebal ekstra */
+            color: #ffd966; /* Kuning */
+            margin-left: 6px; /* Margin kiri */
+            background: #00000060; /* Background hitam transparan */
+            padding: 1px 8px; /* Padding */
+            border-radius: 30px; /* Border radius */
+        }
+
+        .button-group { /* Grup tombol aksi */
+            display: flex; /* Flexbox */
+            gap: 12px; /* Jarak */
+            margin-top: 12px; /* Margin atas */
+        }
+
+        button { /* Style umum tombol */
+            background: #ffb347; /* Background oranye */
+            border: none; /* Tanpa border */
+            font-size: 0.9rem; /* Ukuran font */
+            font-weight: bold; /* Tebal */
+            padding: 8px 0; /* Padding vertikal */
+            border-radius: 60px; /* Border radius */
+            cursor: pointer; /* Kursor tangan */
+            font-family: inherit; /* Font warisan */
+            transition: 0.07s linear; /* Transisi */
+            color: #1f3a3f; /* Warna teks */
+            flex: 1; /* Fleksibel */
+            box-shadow: 0 3px 0 #a05e15; /* Bayangan */
+        }
+
+        button:active { /* State tombol ditekan */
+            transform: translateY(2px); /* Geser bawah */
+            box-shadow: 0 1px 0 #a05e15; /* Bayangan mengecil */
+        }
+
+        .menu-btn-game { /* Tombol kembali ke menu utama */
+            background: #4a6a8a; /* Background biru keabuan */
+            box-shadow: 0 3px 0 #2a3a4a; /* Bayangan */
+            color: white; /* Warna putih */
+        }
+
+        .pause-btn { /* Tombol pause */
+            background: #5a5a6e; /* Background abu-abu gelap */
+            box-shadow: 0 3px 0 #3a3a4a; /* Bayangan */
+            color: white; /* Warna putih */
+        }
+
+        .status { /* Status game */
+            margin-top: 12px; /* Margin atas */
+            background: #000000aa; /* Background hitam transparan */
+            backdrop-filter: blur(4px); /* Blur */
+            padding: 5px 10px; /* Padding */
+            border-radius: 30px; /* Border radius */
+            text-align: center; /* Teks tengah */
+            color: #ffecb3; /* Warna kuning pucat */
+            font-weight: bold; /* Tebal */
+            font-size: 0.75rem; /* Ukuran kecil */
+        }
+
+        .control-buttons { /* Tombol kontrol sentuh (kiri/kanan) */
+            display: none; /* Default tersembunyi */
+            gap: 15px; /* Jarak */
+            margin-top: 12px; /* Margin atas */
+            justify-content: center; /* Pusat */
+        }
+
+        .arrow-btn { /* Tombol panah */
+            background: #2a4a6e; /* Background biru gelap */
+            box-shadow: 0 3px 0 #0a2a3a; /* Bayangan */
+            width: auto; /* Lebar otomatis */
+            padding: 8px 20px; /* Padding */
+            font-size: 1.2rem; /* Ukuran font */
+            font-weight: bold; /* Tebal */
+            color: white; /* Putih */
+            flex: 0 1 auto; /* Fleksibel tapi tidak memenuhi ruang */
+        }
+
+        .touch-device .control-buttons { /* Tampilkan tombol kontrol pada perangkat sentuh */
+            display: flex; /* Flexbox */
+        }
+
+        .touch-guide { /* Panduan sentuh */
+            font-size: 0.65rem; /* Ukuran kecil */
+            color: #8ab3cf; /* Warna biru muda */
+            text-align: center; /* Tengah */
+            margin-top: 8px; /* Margin atas */
+        }
+
+        footer { /* Footer game */
+            margin-top: 8px; /* Margin atas */
+            font-size: 0.55rem; /* Ukuran kecil */
+            text-align: center; /* Tengah */
+            color: #6d8faa; /* Warna biru keabuan */
+        }
+
+        @media (max-width: 720px) { /* Responsif untuk layar kecil */
+            .game-wrapper { padding: 12px; } /* Padding lebih kecil */
+            canvas { width: 95vw; height: auto; } /* Lebar menyesuaikan viewport */
+            .info-box { font-size: 0.7rem; padding: 3px 8px; } /* Ukuran lebih kecil */
+            .info-box span { font-size: 1rem; } /* Ukuran span */
+            .arrow-btn { padding: 6px 16px; font-size: 1rem; } /* Tombol panah lebih kecil */
+            .menu-card { padding: 25px 25px; } /* Padding menu */
+            .menu-card h1 { font-size: 2rem; } /* Judul menu */
+        }
+
+        @media (pointer: fine) and (hover: hover) { /* Untuk perangkat non-sentuh (mouse) */
+            .control-buttons { /* Sembunyikan tombol sentuh */
+                display: none !important; /* Penting */
+            }
+        }
+
+        @media (pointer: coarse) { /* Untuk perangkat sentuh */
+            .control-buttons { /* Tampilkan tombol */
+                display: flex !important; /* Penting */
+            }
+        }
+    </style> <!-- Penutup style -->
+</head> <!-- Penutup head -->
+<body> <!-- Pembuka body -->
+
+<div id="loadingOverlay" class="loading-overlay"> <!-- Overlay loading -->
+    <div class="loading-bar"> <!-- Bar loading -->
+        <div id="loadingProgress" class="loading-progress"></div> <!-- Indikator progress -->
+    </div> <!-- Penutup bar -->
+    <div class="loading-text" id="loadingText">Loading Assets... 0%</div> <!-- Teks loading -->
+</div> <!-- Penutup loading overlay -->
+
+<!-- HALAMAN UTAMA (MENU) -->
+<div id="mainMenu" class="main-menu"> <!-- Menu utama -->
+    <div class="menu-card"> <!-- Kartu menu -->
+        <h1>⚡ SPACE WAR ⚡</h1> <!-- Judul game -->
+        <div class="sub">Auto Shoot • Speed Up • Boss Fight</div> <!-- Sub-judul -->
+        <div class="menu-stats"> <!-- Statistik / petunjuk -->
+            <p>🎮 <span>DUAL CONTROL</span> → Keyboard panah / Tombol layar / Geser</p> <!-- Kontrol dual -->
+            <p>💥 <span>SPEED UP SYSTEM</span> → Setiap BOSS mati, tembakan makin cepat!</p> <!-- Fitur speed up -->
+            <p>👾 <span>TARGET 1000 POIN</span> untuk MENANG!</p> <!-- Target menang -->
+            <p>❤️ <span>3 NYAWA</span> • Boss tiap 200 poin</p> <!-- Nyawa dan boss -->
+        </div> <!-- Penutup menu-stats -->
+        <button id="startGameBtn" class="menu-btn">🚀 MULAI GAME 🚀</button> <!-- Tombol mulai -->
+        <div class="menu-footer">Tekan START • Gunakan ← → atau geser layar untuk mengendalikan pesawat</div> <!-- Footer menu -->
+    </div> <!-- Penutup menu-card -->
+</div> <!-- Penutup mainMenu -->
+
+<!-- GAME WRAPPER -->
+<div id="gameWrapper" class="game-wrapper"> <!-- Container game (awalnya tersembunyi) -->
+    <canvas id="gameCanvas" width="650" height="450"></canvas> <!-- Canvas permainan -->
+    
+    <div class="info-panel"> <!-- Panel info atas -->
+        <div class="info-box">💥 SKOR <span id="scoreValue">0</span></div> <!-- Skor -->
+        <div class="info-box">❤️ NYAWA <span id="livesValue">3</span></div> <!-- Nyawa -->
+        <div class="info-box">👾 BOSS HP <span id="bossHpValue">-</span></div> <!-- HP Boss -->
+        <div class="info-box">⚡ SPEED <span id="speedLevelValue">1</span></div> <!-- Level speed -->
+    </div> <!-- Penutup info-panel -->
+    
+    <div class="button-group"> <!-- Grup tombol utama -->
+        <button id="pauseBtn" class="pause-btn">⏸️ PAUSE</button> <!-- Tombol pause -->
+        <button id="restartBtn">🔄 RESTART</button> <!-- Tombol restart -->
+        <button id="menuBtn" class="menu-btn-game">🏠 MAIN MENU</button> <!-- Tombol ke menu -->
+    </div> <!-- Penutup button-group -->
+    
+    <div class="control-buttons"> <!-- Tombol kontrol sentuh -->
+        <button id="arrowLeftBtn" class="arrow-btn">◀ KIRI</button> <!-- Geser kiri -->
+        <button id="arrowRightBtn" class="arrow-btn">KANAN ▶</button> <!-- Geser kanan -->
+    </div> <!-- Penutup control-buttons -->
+    <div class="touch-guide"> <!-- Panduan sentuh -->
+        ⌨️ Keyboard ← → | 📱 Geser layar | Klik tombol (mobile) <!-- Instruksi -->
+    </div> <!-- Penutup touch-guide -->
+    
+    <div class="status" id="gameStatus">🎮 Selamat datang! Kalahkan BOSS untuk Speed Up!</div> <!-- Status game -->
+    <footer>⚡ Speed Up setiap BOSS mati | Target 1000 poin MENANG</footer> <!-- Footer game -->
+</div> <!-- Penutup gameWrapper -->
+
+<script> // Memulai script JavaScript
+    (function(){ // IIFE untuk menghindari polusi global
+        // ========== ASSET MANAGEMENT ==========
+        // Menggunakan placeholder image dari picsum untuk demo
+        // Anda bisa mengganti URL ini dengan asset Anda sendiri
+        const assetsToLoad = { // Objek URL aset yang akan dimuat
+            player: "assets//pesawat.png", // Gambar pesawat pemain
+            enemy: " assets//musuh.png", // Gambar musuh biasa
+            boss: "assets//boss.png", // Gambar boss
+            bullet: "assets//peluru.png", // Gambar peluru pemain
+            bossBullet: "assets//peluru.png", // Gambar peluru boss (sama untuk demo)
+            explosion: "https://cdn-icons-png.flaticon.com/512/2089/2089791.png" // Gambar ledakan (placeholder)
+        }; // Penutup objek assetsToLoad
+        
+        // Alternatif: menggunakan canvas pattern jika gambar gagal load
+        let assets = { // Objek aset game
+            playerImg: new Image(), // Objek Image untuk pemain
+            enemyImg: new Image(), // Objek Image untuk musuh
+            bossImg: new Image(), // Objek Image untuk boss
+            bulletImg: new Image(), // Objek Image untuk peluru
+            bossBulletImg: new Image(), // Objek Image untuk peluru boss
+            explosionImg: new Image(), // Objek Image untuk ledakan
+            loaded: false, // Flag apakah semua aset telah dimuat
+            totalAssets: 6, // Total aset yang harus dimuat
+            loadedAssets: 0, // Penghitung aset yang sudah dimuat
+            useFallback: true // Fallback jika gambar gagal (default true)
+        }; // Penutup objek assets
+        
+        function updateLoadingProgress() { // Fungsi memperbarui progress loading
+            const percent = Math.floor((assets.loadedAssets / assets.totalAssets) * 100); // Hitung persentase
+            const progressBar = document.getElementById('loadingProgress'); // Ambil elemen progress bar
+            const loadingText = document.getElementById('loadingText'); // Ambil elemen teks loading
+            if (progressBar) progressBar.style.width = percent + '%'; // Update lebar progress bar
+            if (loadingText) loadingText.innerHTML = `Loading Assets... ${percent}%`; // Update teks
+            
+            if (assets.loadedAssets === assets.totalAssets) { // Jika semua aset selesai dimuat
+                assets.loaded = true; // Tandai aset siap
+                setTimeout(() => { // Tunggu sebentar
+                    const loadingOverlay = document.getElementById('loadingOverlay'); // Ambil elemen overlay loading
+                    if (loadingOverlay) loadingOverlay.style.display = 'none'; // Sembunyikan overlay
+                }, 500); // Delay 500ms
+            } // Akhir if
+        } // Akhir fungsi
+        
+        function assetLoaded() { // Callback ketika satu aset selesai dimuat
+            assets.loadedAssets++; // Tambah penghitung
+            updateLoadingProgress(); // Perbarui tampilan progress
+        } // Akhir fungsi
+        
+        // Set source gambar dengan fallback handler
+        assets.playerImg.src = assetsToLoad.player; // Set src playerImg
+        assets.playerImg.onload = assetLoaded; // Pasang event onload
+        assets.playerImg.onerror = () => { console.log("Player image failed, using fallback"); assetLoaded(); }; // Fallback jika error
+        
+        assets.enemyImg.src = assetsToLoad.enemy; // Set src enemyImg
+        assets.enemyImg.onload = assetLoaded; // Pasang onload
+        assets.enemyImg.onerror = () => { console.log("Enemy image failed, using fallback"); assetLoaded(); }; // Fallback
+        
+        assets.bossImg.src = assetsToLoad.boss; // Set src bossImg
+        assets.bossImg.onload = assetLoaded; // Onload
+        assets.bossImg.onerror = () => { console.log("Boss image failed, using fallback"); assetLoaded(); }; // Fallback
+        
+        assets.bulletImg.src = assetsToLoad.bullet; // Set src bulletImg
+        assets.bulletImg.onload = assetLoaded; // Onload
+        assets.bulletImg.onerror = () => { console.log("Bullet image failed, using fallback"); assetLoaded(); }; // Fallback
+        
+        assets.bossBulletImg.src = assetsToLoad.bossBullet; // Set src bossBulletImg
+        assets.bossBulletImg.onload = assetLoaded; // Onload
+        assets.bossBulletImg.onerror = () => { console.log("Boss bullet image failed, using fallback"); assetLoaded(); }; // Fallback
+        
+        assets.explosionImg.src = assetsToLoad.explosion; // Set src explosionImg
+        assets.explosionImg.onload = assetLoaded; // Onload
+        assets.explosionImg.onerror = () => { console.log("Explosion image failed, using fallback"); assetLoaded(); }; // Fallback
+        
+        // ========== DETEKSI PERANGKAT TOUCH ==========
+        function detectAndApplyTouchClass() { // Fungsi mendeteksi perangkat sentuh
+            const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0; // Cek dukungan touch
+            if (isTouchDevice) { // Jika perangkat sentuh
+                document.body.classList.add('touch-device'); // Tambah kelas touch-device
+            } else { // Jika bukan
+                document.body.classList.remove('touch-device'); // Hapus kelas
+            } // Akhir if
+        } // Akhir fungsi
+        detectAndApplyTouchClass(); // Panggil deteksi awal
+        window.addEventListener('resize', detectAndApplyTouchClass); // Deteksi ulang saat resize
+        
+        // DOM elements
+        const mainMenu = document.getElementById('mainMenu'); // Ambil elemen menu utama
+        const gameWrapper = document.getElementById('gameWrapper'); // Ambil elemen game wrapper
+        const startBtn = document.getElementById('startGameBtn'); // Ambil tombol mulai
+        const canvas = document.getElementById('gameCanvas'); // Ambil canvas
+        const ctx = canvas.getContext('2d'); // Ambil konteks 2D
+        
+        const CW = 650; // Lebar canvas
+        const CH = 450; // Tinggi canvas
+        canvas.width = CW; // Set lebar canvas
+        canvas.height = CH; // Set tinggi canvas
+        
+        // ========== GAME STATE ==========
+        let gameActive = true; // Status game aktif
+        let isPaused = false; // Status pause
+        let winCondition = false; // Status menang
+        let animationId = null; // ID requestAnimationFrame
+        
+        // ========== DATA GAME ==========
+        let score = 0; // Skor
+        let lives = 3; // Nyawa
+        let bossLevel = 0; // Level boss
+        let speedLevel = 1; // Level kecepatan tembak
+        let currentShootDelay = 6; // Delay tembak saat ini (frame)
+        let playerX = CW/2 - 16; // Posisi X pemain (tengah)
+        let playerY = CH - 60; // Posisi Y pemain
+        let bullets = []; // Array peluru pemain
+        let enemies = []; // Array musuh biasa
+        let bossBullets = []; // Array peluru boss
+        let explosions = []; // Array efek ledakan
+        let boss = null; // Objek boss
+        let bossActive = false; // Apakah boss sedang aktif
+        let bossSpawnTriggered = false; // Apakah spawn boss sudah terpicu
+        let bossWarningActive = false; // Apakah peringatan boss sedang aktif
+        let bossWarningTimer = 0; // Timer peringatan boss
+        let isBossFight = false; // Apakah sedang pertarungan boss
+        let autoShootCounter = 0; // Counter untuk auto shoot
+        let enemySpawnCounter = 0; // Counter untuk spawn musuh
+        
+        // konstanta
+        const PLAYER_WIDTH = 48; // Lebar pemain
+        const PLAYER_HEIGHT = 48; // Tinggi pemain
+        const BULLET_W = 20; // Lebar peluru
+        const BULLET_H = 25; // Tinggi peluru
+        const BULLET_SPEED = -5; // Kecepatan peluru (naik)
+        const ENEMY_SIZE = 42; // Ukuran musuh (persegi)
+        const ENEMY_SPEED = 2.2; // Kecepatan musuh turun
+        const ENEMY_SPAWN_DELAY = 38; // Delay spawn musuh (frame)
+        const BOSS_BULLET_SIZE = 25; // Ukuran peluru boss
+        const BOSS_BULLET_SPEED = 3; // Kecepatan peluru boss
+        
+        // kontrol
+        let leftPressed = false; // Status tombol kiri ditekan
+        let rightPressed = false; // Status tombol kanan ditekan
+        let isDragging = false; // Status sedang menggeser layar
+        let dragClientX = 0; // Posisi X saat drag
+        
+        // ========== FUNGSI UTILITY ==========
+        function updateShootSpeed() { // Perbarui kecepatan tembak berdasarkan speedLevel
+            if (speedLevel <= 1) currentShootDelay = 10; // Level 1 delay 10
+            else if (speedLevel === 2) currentShootDelay = 5; // Level 2 delay 5
+            else if (speedLevel === 3) currentShootDelay = 4; // Level 3 delay 4
+            else if (speedLevel === 4) currentShootDelay = 3; // Level 4 delay 3
+            else currentShootDelay = 2; // Level >4 delay 2
+            document.getElementById('speedLevelValue').innerHTML = `${speedLevel} (${Math.floor(60/currentShootDelay)}/dt)`; // Tampilkan info
+        } // Akhir fungsi
+        
+        function increaseSpeed() { // Naikkan level kecepatan
+            speedLevel++; // Tambah speedLevel
+            updateShootSpeed(); // Perbarui delay
+            setStatusMsg(`⚡ SPEED UP! Level ${speedLevel}`, 1500); // Tampilkan pesan
+        } // Akhir fungsi
+        
+        function setStatusMsg(msg, duration = 2000) { // Tampilkan pesan status sementara
+            const statusDiv = document.getElementById('gameStatus'); // Ambil elemen status
+            if(statusDiv) statusDiv.innerHTML = msg; // Set teks
+            if(duration > 0) { // Jika durasi >0
+                setTimeout(() => { // Atur timeout
+                    if(gameActive && !isPaused && !winCondition && statusDiv) // Jika game masih aktif normal
+                        statusDiv.innerHTML = `🎮 Speed Lv.${speedLevel} | Target 1000 poin`; // Kembalikan status default
+                }, duration); // Durasi
+            } // Akhir if
+        } // Akhir fungsi
+        
+        function addScore(value) { // Tambah skor
+            score += value; // Tambah nilai
+            document.getElementById('scoreValue').innerText = score; // Update tampilan
+            if(score >= 1000 && !winCondition && gameActive) { // Cek apakah menang
+                winCondition = true; // Set win condition
+                gameActive = false; // Hentikan game
+                setStatusMsg(`🎉🎉 MENANG! Skor ${score} 🎉🎉`, 3000); // Tampilkan pesan
+                enemies = []; // Hapus musuh
+                bossBullets = []; // Hapus peluru boss
+                if(bossActive) { bossActive = false; boss = null; } // Matikan boss jika ada
+                bossWarningActive = false; // Matikan peringatan
+                setTimeout(() => resetGame(), 4000); // Reset game setelah 4 detik
+                return; // Keluar
+            } // Akhir if menang
+            if(!winCondition && !bossActive && !bossWarningActive && gameActive && !bossSpawnTriggered) { // Jika waktunya boss muncul
+                let targetScore = 200 + (bossLevel * 200); // Hitung skor target untuk boss berikutnya
+                if(score >= targetScore) showBossWarning(bossLevel + 1); // Panggil peringatan boss
+            } // Akhir if
+        } // Akhir fungsi
+        
+        function loseLife() { // Kurangi nyawa
+            if(winCondition) return; // Abaikan jika sudah menang
+            lives--; // Kurangi nyawa
+            document.getElementById('livesValue').innerText = lives; // Update tampilan
+            if(lives <= 0) { // Jika nyawa habis
+                gameActive = false; // Game over
+                setStatusMsg(`💀 GAME OVER! Skor: ${score}`, 0); // Tampilkan pesan
+            } else { // Jika masih ada nyawa
+                setStatusMsg(`⚠️ Pesawat terkena! Sisa nyawa: ${lives}`, 1200); // Pesan peringatan
+            } // Akhir if
+        } // Akhir fungsi
+        
+        function addExplosion(x, y, isBig = false) { // Tambah efek ledakan
+            explosions.push({ x, y, life: isBig ? 15 : 10, size: isBig ? 20 : 12 }); // Masukkan ke array
+        } // Akhir fungsi
+        
+        function showBossWarning(level) { // Tampilkan peringatan boss akan datang
+            bossWarningActive = true; // Aktifkan peringatan
+            bossWarningTimer = 90; // Set timer 90 frame
+            setStatusMsg(`⚠️⚠️ BOSS LEVEL ${level} AKAN MUNCUL! ⚠️⚠️`, 2000); // Pesan
+        } // Akhir fungsi
+        
+        function spawnBoss() { // Memunculkan boss
+            bossLevel++; // Naik level boss
+            let bossHp = 15 + (bossLevel * 3); // Hitung HP boss
+            boss = { // Buat objek boss
+                x: CW/2 - 45, y: 30, width: 85, height: 65, // Posisi dan ukuran
+                hp: bossHp, maxHp: bossHp, moveDirection: 1, shootTimer: 0, level: bossLevel // Properti
+            }; // Akhir objek
+            bossActive = true; // Tandai boss aktif
+            bossSpawnTriggered = true; // Tandai sudah dipicu
+            bossWarningActive = false; // Matikan peringatan
+            isBossFight = true; // Masuk mode boss fight
+            document.getElementById('bossHpValue').innerHTML = `${boss.hp}/${boss.maxHp}`; // Update tampilan HP
+            setStatusMsg(`🔥🔥 BOSS LEVEL ${bossLevel} HADIR! HP: ${boss.hp} 🔥🔥`, 2500); // Pesan
+        } // Akhir fungsi
+        
+        function bossShoot() { // Boss menembak
+            if(!bossActive || !gameActive) return; // Keluar jika tidak aktif
+            const centerX = boss.x + boss.width/2; // Titik tengah X
+            const centerY = boss.y + boss.height; // Bawah boss
+            let bulletCount = 3 + (bossLevel >= 3 ? 1 : 0) + (bossLevel >= 5 ? 1 : 0); // Jumlah peluru
+            for(let i = 0; i < bulletCount; i++) { // Loop sejumlah peluru
+                let vx = (i - (bulletCount-1)/2) * 1.3; // Kecepatan horizontal menyebar
+                bossBullets.push({ // Tambah ke array
+                    x: centerX - BOSS_BULLET_SIZE/2 + (vx * 3), y: centerY, // Posisi
+                    w: BOSS_BULLET_SIZE, h: BOSS_BULLET_SIZE, vx: vx, vy: BOSS_BULLET_SPEED // Ukuran & kecepatan
+                }); // Akhir push
+            } // Akhir for
+        } // Akhir fungsi
+        
+        // ========== UPDATE POSISI ==========
+        function updatePlayerPosition() { // Update posisi pemain
+            if(!gameActive || winCondition || isPaused) return; // Jangan update jika tidak aktif
+            let moveSpeed = 7.2; // Kecepatan gerak
+            let newX = playerX; // Posisi X baru sementara
+            if(leftPressed) newX -= moveSpeed; // Jika tombol kiri, geser kiri
+            if(rightPressed) newX += moveSpeed; // Jika tombol kanan, geser kanan
+            if(isDragging && !winCondition && gameActive) { // Jika sedang drag
+                const rect = canvas.getBoundingClientRect(); // Ambil bounding rect canvas
+                const scaleX = canvas.width / rect.width; // Skala X
+                let canvasX = (dragClientX - rect.left) * scaleX; // Konversi koordinat mouse ke canvas
+                canvasX = Math.min(Math.max(canvasX, PLAYER_WIDTH/2), CW - PLAYER_WIDTH/2); // Batasi
+                newX = canvasX - PLAYER_WIDTH/2; // Sesuaikan agar pointer di tengah pesawat
+            } // Akhir if
+            playerX = Math.min(Math.max(newX, 0), CW - PLAYER_WIDTH); // Batasi agar tidak keluar layar
+        } // Akhir fungsi
+        
+        function autoShoot() { // Fungsi auto tembak
+            if(!gameActive || winCondition || isPaused) return; // Hanya jika game aktif
+            autoShootCounter++; // Tambah counter
+            if(autoShootCounter >= currentShootDelay) { // Jika mencapai delay
+                autoShootCounter = 0; // Reset counter
+                bullets.push({ x: playerX + PLAYER_WIDTH/2 - BULLET_W/2, y: playerY - 6, w: BULLET_W, h: BULLET_H }); // Tambah peluru
+            } // Akhir if
+        } // Akhir fungsi
+        
+        // ========== UPDATE LOGIKA ==========
+        function updateBossWarning() { // Update peringatan boss
+            if(bossWarningActive && !winCondition && gameActive && !isPaused) { // Jika peringatan aktif dan game berjalan
+                bossWarningTimer--; // Kurangi timer
+                if(bossWarningTimer <= 0) { spawnBoss(); enemies = []; } // Jika timer habis, spawn boss dan hapus musuh biasa
+            } // Akhir if
+        } // Akhir fungsi
+        
+        function updateBoss() { // Update logika boss
+            if(!bossActive || !gameActive || winCondition || isPaused) return; // Keluar jika tidak relevan
+            let bossSpeed = 1.2 + (bossLevel * 0.1); // Kecepatan gerak boss
+            boss.x += boss.moveDirection * bossSpeed; // Gerak horizontal
+            if(boss.x <= 15) { boss.x = 15; boss.moveDirection = 1; } // Batas kiri, balik arah
+            if(boss.x + boss.width >= CW - 15) { boss.x = CW - boss.width - 15; boss.moveDirection = -1; } // Batas kanan
+            
+            let shootDelay = Math.max(35, 50 - (bossLevel * 1.5)); // Hitung delay tembak
+            boss.shootTimer++; // Tambah timer tembak
+            if(boss.shootTimer >= shootDelay) { boss.shootTimer = 0; bossShoot(); } // Tembak jika waktunya
+            
+            for(let i=0; i<bullets.length; i++) { // Cek tabrakan peluru pemain dengan boss
+                const b = bullets[i]; // Peluru ke-i
+                if(b.x < boss.x+boss.width && b.x+b.w > boss.x && b.y < boss.y+boss.height && b.y+b.h > boss.y) { // Deteksi tabrakan
+                    bullets.splice(i,1); // Hapus peluru
+                    boss.hp--; // Kurangi HP boss
+                    document.getElementById('bossHpValue').innerHTML = `${boss.hp}/${boss.maxHp}`; // Update tampilan HP
+                    addExplosion(boss.x+boss.width/2, boss.y+boss.height/2, false); // Efek ledakan kecil
+                    i--; // Koreksi indeks
+                    if(boss.hp <= 0) { // Jika HP habis
+                        addExplosion(boss.x+boss.width/2, boss.y+boss.height/2, true); // Ledakan besar
+                        let bonus = 50 + (bossLevel * 10); // Bonus skor
+                        addScore(bonus); // Tambah skor
+                        increaseSpeed(); // Naikkan speed
+                        bossActive = false; boss = null; bossSpawnTriggered = false; isBossFight = false; // Reset status boss
+                        document.getElementById('bossHpValue').innerHTML = '-'; // Kosongkan tampilan HP
+                        setStatusMsg(`🎉 BOSS ${bossLevel} TERKALAHKAN! +${bonus} poin! Speed Lv.${speedLevel}`, 2500); // Pesan
+                        return; // Keluar
+                    } // Akhir if HP habis
+                    break; // Keluar loop (satu peluru saja)
+                } // Akhir if tabrakan
+            } // Akhir for bullets
+            
+            if(playerX < boss.x+boss.width && playerX+PLAYER_WIDTH > boss.x && playerY < boss.y+boss.height && playerY+PLAYER_HEIGHT > boss.y) { // Tabrakan pemain dengan boss
+                addExplosion(boss.x+boss.width/2, boss.y+boss.height/2, true); // Ledakan
+                loseLife(); // Kurangi nyawa
+                playerY = Math.min(CH-70, playerY+15); // Dorong pemain sedikit ke bawah
+            } // Akhir if
+        } // Akhir fungsi
+        
+        function updateBossBullets() { // Update peluru boss
+            if(winCondition || isPaused) return; // Hanya saat game aktif
+            for(let i=0; i<bossBullets.length; i++) { // Iterasi peluru boss
+                const bb = bossBullets[i]; // Peluru ke-i
+                bb.x += bb.vx; bb.y += bb.vy; // Update posisi
+                if(bb.x+bb.w < 0 || bb.x > CW || bb.y > CH || bb.y+bb.h < 0) { bossBullets.splice(i,1); i--; continue; } // Hapus jika keluar layar
+                if(bb.x < playerX+PLAYER_WIDTH-4 && bb.x+bb.w > playerX+4 && bb.y < playerY+PLAYER_HEIGHT-4 && bb.y+bb.h > playerY+4) { // Tabrakan dengan pemain
+                    bossBullets.splice(i,1); loseLife(); i--; // Hapus peluru, kurangi nyawa
+                } // Akhir if
+            } // Akhir for
+        } // Akhir fungsi
+        
+        function spawnEnemy() { // Spawn musuh biasa
+            if(bossActive || bossWarningActive || winCondition || isPaused) return; // Jangan spawn saat boss/pause
+            let x = Math.random() * (CW - ENEMY_SIZE); // Posisi X acak
+            enemies.push({ x: x, y: -ENEMY_SIZE, w: ENEMY_SIZE, h: ENEMY_SIZE }); // Tambah musuh di atas layar
+        } // Akhir fungsi
+        
+        function updateGameLogic() { // Update utama logika game
+            if(!gameActive || winCondition || isPaused) return; // Hanya jika game berjalan
+            updatePlayerPosition(); // Update posisi pemain
+            autoShoot(); // Auto tembak
+            updateBossWarning(); // Update peringatan boss
+            for(let i=0; i<bullets.length; i++) { // Update posisi peluru
+                bullets[i].y += BULLET_SPEED; // Gerak ke atas
+                if(bullets[i].y+bullets[i].h < 0 || bullets[i].y > CH) { bullets.splice(i,1); i--; } // Hapus jika keluar layar
+            } // Akhir for
+            updateBoss(); // Update boss
+            updateBossBullets(); // Update peluru boss
+            
+            if(!bossActive && !bossWarningActive) { // Jika tidak ada boss
+                for(let i=0; i<enemies.length; i++) { // Iterasi musuh
+                    enemies[i].y += ENEMY_SPEED; // Musuh turun
+                    let hit = false; // Flag terkena peluru
+                    for(let j=0; j<bullets.length; j++) { // Cek tabrakan dengan peluru
+                        const b = bullets[j]; // Peluru
+                        if(b.x < enemies[i].x+enemies[i].w && b.x+b.w > enemies[i].x && b.y < enemies[i].y+enemies[i].h && b.y+b.h > enemies[i].y) { // Jika kena
+                            hit = true; bullets.splice(j,1); break; // Hapus peluru, tandai hit
+                        } // Akhir if
+                    } // Akhir for
+                    if(hit) { addExplosion(enemies[i].x+enemies[i].w/2, enemies[i].y+enemies[i].h/2); enemies.splice(i,1); addScore(10); i--; continue; } // Hancurkan musuh, tambah skor
+                    if(playerX < enemies[i].x+enemies[i].w && playerX+PLAYER_WIDTH > enemies[i].x && playerY < enemies[i].y+enemies[i].h && playerY+PLAYER_HEIGHT > enemies[i].y) { // Tabrakan pemain-musuh
+                        addExplosion(enemies[i].x+enemies[i].w/2, enemies[i].y+enemies[i].h/2); enemies.splice(i,1); loseLife(); i--; continue; // Ledakan, kurang nyawa
+                    } // Akhir if
+                    if(enemies[i] && enemies[i].y > CH) { enemies.splice(i,1); i--; } // Hapus musuh yang lewat bawah
+                } // Akhir for musuh
+                enemySpawnCounter++; // Tambah counter spawn
+                if(enemySpawnCounter >= ENEMY_SPAWN_DELAY) { enemySpawnCounter = 0; if(gameActive && !bossActive && !bossWarningActive && !winCondition) spawnEnemy(); } // Spawn musuh baru
+            } else if(bossWarningActive) { // Jika peringatan boss
+                for(let i=0; i<enemies.length; i++) { enemies[i].y += ENEMY_SPEED; if(enemies[i].y > CH) { enemies.splice(i,1); i--; } } // Tetap update musuh tapi tidak spawn baru
+            } // Akhir else if
+            for(let i=0; i<explosions.length; i++) { explosions[i].life--; if(explosions[i].life <= 0) { explosions.splice(i,1); i--; } } // Update durasi ledakan
+        } // Akhir fungsi
+        
+        // ========== RENDER DENGAN ASSET GAMBAR ==========
+        function drawStars() { // Gambar bintang latar
+            for(let i=0; i<100; i++) { // 100 bintang
+                let sx = (i*127)%CW, sy = (i*311)%CH; // Posisi pseudo-acak
+                ctx.fillStyle = `rgba(255,240,180,${0.2+Math.sin(Date.now()*0.001+i)*0.15})`; // Warna bintang berkelap-kelip
+                ctx.fillRect(sx, sy, 1.5, 1.5); // Gambar titik kecil
+            } // Akhir for
+        } // Akhir fungsi
+        
+        function drawPauseOverlay() { // Tampilan overlay pause
+            if(isPaused && !winCondition) { // Jika game pause dan belum menang
+                ctx.globalAlpha = 0.7; // Transparansi
+                ctx.fillStyle = '#020a1a'; // Warna gelap
+                ctx.fillRect(0, 0, CW, CH); // Tutup layar
+                ctx.globalAlpha = 1; // Reset alpha
+                ctx.font = 'bold 32px monospace'; // Font besar
+                ctx.fillStyle = '#ffdd99'; // Warna teks
+                ctx.fillText('⏸️ PAUSE', CW/2-70, CH/2-20); // Teks pause
+                ctx.font = '16px monospace'; // Font kecil
+                ctx.fillStyle = '#aaffdd'; // Warna
+                ctx.fillText('Tekan tombol PAUSE lagi untuk lanjut', CW/2-140, CH/2+30); // Instruksi
+            } // Akhir if
+        } // Akhir fungsi
+        
+        function drawWinAnimation() { // Animasi kemenangan
+            if(winCondition) { // Jika menang
+                ctx.globalAlpha = 0.4; // Transparan
+                ctx.fillStyle = '#ffd700'; // Emas
+                ctx.fillRect(0, 0, CW, CH); // Overlay
+                ctx.globalAlpha = 1; // Reset
+                ctx.font = 'bold 32px monospace'; // Font
+                ctx.fillStyle = '#fff'; // Putih
+                ctx.fillText('🎉 VICTORY! 🎉', CW/2-115, CH/2-20); // Teks
+                ctx.font = '18px monospace'; // Font
+                ctx.fillStyle = '#ffffaa'; // Kuning
+                ctx.fillText(`SKOR: ${score}`, CW/2-50, CH/2+30); // Skor akhir
+            } // Akhir if
+        } // Akhir fungsi
+        
+        function drawBossWarning() { // Efek peringatan boss
+            if(bossWarningActive && !winCondition) { // Jika aktif
+                ctx.globalAlpha = 0.5+Math.sin(Date.now()*0.01)*0.3; // Berkedip
+                ctx.fillStyle = '#a00'; // Merah gelap
+                ctx.fillRect(0,0,CW,CH); // Tutup layar
+                ctx.globalAlpha=1; // Reset
+                ctx.font='bold 28px monospace'; // Font
+                ctx.fillStyle='#fff'; // Putih
+                ctx.fillText('⚠️ BOSS COMING! ⚠️', CW/2-130, CH/2-10); // Teks
+            } // Akhir if
+        } // Akhir fungsi
+        
+        // DRAW PLAYER dengan asset gambar
+        function drawPlayer() { // Gambar pemain
+            if(winCondition) return; // Jangan gambar jika menang
+            if (assets.playerImg.complete && assets.playerImg.naturalWidth > 0) { // Jika gambar berhasil dimuat
+                ctx.drawImage(assets.playerImg, playerX, playerY, PLAYER_WIDTH, PLAYER_HEIGHT); // Gambar dari aset
+            } else { // Jika gambar gagal
+                // Fallback ke bentuk geometris
+                ctx.save(); // Simpan state
+                ctx.shadowBlur=6; ctx.shadowColor="#3ea5ff"; // Bayangan
+                const cx=playerX+PLAYER_WIDTH/2, ty=playerY, by=playerY+PLAYER_HEIGHT; // Titik bantu
+                ctx.beginPath(); // Mulai path
+                ctx.moveTo(cx, ty); // Pindah ke ujung atas tengah
+                ctx.lineTo(playerX+6, by-8); // Sisi kiri bawah
+                ctx.lineTo(cx-7, by); // Bawah kiri
+                ctx.lineTo(cx, by-4); // Tengah bawah
+                ctx.lineTo(cx+7, by); // Bawah kanan
+                ctx.lineTo(playerX+PLAYER_WIDTH-6, by-8); // Sisi kanan bawah
+                ctx.fillStyle='#6bc0ff'; ctx.fill(); // Isi biru muda
+                ctx.beginPath(); // Sayap
+                ctx.moveTo(cx, ty+4); // Atas
+                ctx.lineTo(cx-8, by-12); // Kiri
+                ctx.lineTo(cx+8, by-12); // Kanan
+                ctx.fillStyle='#ffcd4a'; ctx.fill(); // Isi kuning
+                ctx.fillStyle='#3f8ec7'; // Warna gelap
+                ctx.fillRect(playerX-4, playerY+18, 6, 10); // Sirip kiri
+                ctx.fillRect(playerX+PLAYER_WIDTH-2, playerY+18, 6, 10); // Sirip kanan
+                ctx.restore(); // Kembalikan state
+            } // Akhir else
+        } // Akhir fungsi
+        
+        // DRAW BULLETS dengan asset gambar
+        function drawBullets() { // Gambar peluru pemain
+            for(let b of bullets) { // Iterasi semua peluru
+                if (assets.bulletImg.complete && assets.bulletImg.naturalWidth > 0) { // Jika gambar ada
+                    ctx.drawImage(assets.bulletImg, b.x, b.y, b.w, b.h); // Gambar dari aset
+                } else { // Fallback
+                    ctx.fillStyle='#ffff70'; // Kuning terang
+                    ctx.shadowBlur=5; // Bayangan
+                    ctx.fillRect(b.x,b.y,b.w,b.h); // Kotak
+                    ctx.fillStyle='#ffaa40'; // Oranye
+                    ctx.fillRect(b.x+1,b.y+2,b.w-2,b.h-4); // Detail
+                } // Akhir else
+            } // Akhir for
+            ctx.shadowBlur=0; // Reset bayangan
+        } // Akhir fungsi
+        
+        // DRAW BOSS BULLETS dengan asset gambar
+        function drawBossBullets() { // Gambar peluru boss
+            for(let bb of bossBullets) { // Iterasi
+                if (assets.bossBulletImg.complete && assets.bossBulletImg.naturalWidth > 0) { // Jika gambar ada
+                    ctx.drawImage(assets.bossBulletImg, bb.x, bb.y, bb.w, bb.h); // Gambar
+                } else { // Fallback
+                    ctx.fillStyle='#ff5555'; // Merah
+                    ctx.fillRect(bb.x,bb.y,bb.w,bb.h); // Kotak
+                } // Akhir else
+            } // Akhir for
+        } // Akhir fungsi
+        
+        // DRAW ENEMIES dengan asset gambar
+        function drawEnemies() { // Gambar musuh biasa
+            for(let e of enemies) { // Iterasi
+                if (assets.enemyImg.complete && assets.enemyImg.naturalWidth > 0) { // Jika ada
+                    ctx.drawImage(assets.enemyImg, e.x, e.y, e.w, e.h); // Gambar
+                } else { // Fallback bentuk oval mata
+                    ctx.fillStyle='#d64531'; // Merah
+                    ctx.beginPath(); ctx.ellipse(e.x+e.w/2, e.y+e.h/2, e.w/2, e.h/2.2,0,0,Math.PI*2); ctx.fill(); // Badan
+                    ctx.fillStyle='#210a10'; // Hitam
+                    ctx.beginPath(); ctx.ellipse(e.x+e.w/3, e.y+e.h/2.5,5,3.5,0,0,Math.PI*2); ctx.fill(); // Mata kiri
+                    ctx.beginPath(); ctx.ellipse(e.x+e.w*2/3, e.y+e.h/2.5,5,3.5,0,0,Math.PI*2); ctx.fill(); // Mata kanan
+                } // Akhir else
+            } // Akhir for
+        } // Akhir fungsi
+        
+        // DRAW BOSS dengan asset gambar
+        function drawBoss() { // Gambar boss
+            if(!bossActive||!boss) return; // Keluar jika tidak ada
+            if (assets.bossImg.complete && assets.bossImg.naturalWidth > 0) { // Jika gambar boss ada
+                ctx.drawImage(assets.bossImg, boss.x, boss.y, boss.width, boss.height); // Gambar
+                // Health bar tetap digambar
+                ctx.fillStyle='#331111'; ctx.fillRect(boss.x, boss.y-12, boss.width, 8); // Background HP
+                ctx.fillStyle='#ff5555'; ctx.fillRect(boss.x, boss.y-12, boss.width*(boss.hp/boss.maxHp), 8); // Isi HP
+                ctx.fillStyle='white'; ctx.font='bold 10px monospace'; ctx.fillText(`Lv.${bossLevel} ${boss.hp}/${boss.maxHp}`, boss.x+boss.width/2-28, boss.y-5); // Teks HP
+            } else { // Fallback geometris
+                ctx.fillStyle='#b84060'; // Warna badan
+                ctx.beginPath(); ctx.ellipse(boss.x+boss.width/2, boss.y+boss.height/2, boss.width/2, boss.height/2.2,0,0,Math.PI*2); ctx.fill(); // Badan
+                ctx.fillStyle='#dd5577'; // Warna sayap
+                ctx.beginPath(); ctx.moveTo(boss.x+boss.width/2-25, boss.y); ctx.lineTo(boss.x+boss.width/2, boss.y-15); ctx.lineTo(boss.x+boss.width/2+25, boss.y); ctx.fill(); // Sayap
+                ctx.fillStyle='#ffee88'; // Mata
+                ctx.beginPath(); ctx.arc(boss.x+boss.width/3, boss.y+boss.height/2.5,7,0,Math.PI*2); ctx.fill(); // Mata kiri
+                ctx.beginPath(); ctx.arc(boss.x+boss.width*2/3, boss.y+boss.height/2.5,7,0,Math.PI*2); ctx.fill(); // Mata kanan
+                ctx.fillStyle='#331111'; ctx.fillRect(boss.x, boss.y-12, boss.width, 8); // HP bar background
+                ctx.fillStyle='#ff5555'; ctx.fillRect(boss.x, boss.y-12, boss.width*(boss.hp/boss.maxHp), 8); // HP bar isi
+                ctx.fillStyle='white'; ctx.font='bold 10px monospace'; ctx.fillText(`Lv.${bossLevel} ${boss.hp}/${boss.maxHp}`, boss.x+boss.width/2-28, boss.y-5); // Teks
+            } // Akhir else
+        } // Akhir fungsi
+        
+        // DRAW EXPLOSIONS dengan asset gambar
+        function drawExplosions() { // Gambar ledakan
+            for(let ex of explosions) { // Iterasi
+                if (assets.explosionImg.complete && assets.explosionImg.naturalWidth > 0) { // Jika gambar ada
+                    let size = (ex.size||12); // Ukuran ledakan
+                    ctx.globalAlpha = ex.life/12; // Transparansi berdasarkan sisa waktu
+                    ctx.drawImage(assets.explosionImg, ex.x-size/2, ex.y-size/2, size, size); // Gambar
+                    ctx.globalAlpha = 1; // Reset
+                } else { // Fallback lingkaran
+                    let size = (ex.size||12)*(1-ex.life/(ex.life>10?15:10)); // Ukuran mengecil
+                    ctx.fillStyle=`rgba(255,100,20,${ex.life/12})`; // Warna oranye transparan
+                    ctx.beginPath(); ctx.arc(ex.x,ex.y,size,0,Math.PI*2); ctx.fill(); // Lingkaran
+                } // Akhir else
+            } // Akhir for
+        } // Akhir fungsi
+        
+        function drawGameOverlay() { // Overlay game over
+            if(!gameActive && !winCondition && !isPaused) { // Jika game over
+                ctx.globalAlpha=0.85; ctx.fillStyle='#03101f'; ctx.fillRect(0,0,CW,CH); ctx.globalAlpha=1; // Latar gelap
+                ctx.font='bold 28px monospace'; ctx.fillStyle='#ffbb77'; ctx.fillText('GAME OVER', CW/2-95, CH/2-20); // Teks
+                ctx.font='16px monospace'; ctx.fillStyle='#bbddff'; ctx.fillText(`SKOR: ${score}`, CW/2-50, CH/2+20); // Skor
+            } // Akhir if
+        } // Akhir fungsi
+        
+        function draw() { // Fungsi render utama
+            ctx.clearRect(0,0,CW,CH); // Bersihkan canvas
+            ctx.fillStyle = '#0c1a3a'; // Warna latar
+            ctx.fillRect(0,0,CW,CH); // Isi latar
+            drawStars(); // Gambar bintang
+            drawEnemies(); // Gambar musuh
+            drawBoss(); // Gambar boss
+            drawBullets(); // Gambar peluru
+            drawBossBullets(); // Gambar peluru boss
+            drawPlayer(); // Gambar pemain
+            drawExplosions(); // Gambar ledakan
+            drawBossWarning(); // Efek peringatan boss
+            drawWinAnimation(); // Animasi menang
+            drawGameOverlay(); // Overlay game over
+            drawPauseOverlay(); // Overlay pause
+            if(!winCondition && gameActive && !isPaused) { // Info saat game aktif
+                ctx.font='bold 10px monospace'; // Font kecil
+                ctx.fillStyle='#aad4ff'; // Biru muda
+                ctx.fillText(`⚡ Lv.${speedLevel} (${Math.floor(60/currentShootDelay)}/dt)`, 8, 20); // Tampilkan speed
+                if(bossActive) ctx.fillText(`🔥 BOSS Lv.${bossLevel} 🔥`, CW/2-60, 20); // Tampilkan boss jika ada
+            } // Akhir if
+        } // Akhir fungsi
+        
+        // ========== RESET GAME ==========
+        function resetGame() { // Reset seluruh state game
+            gameActive = true; // Aktifkan game
+            isPaused = false; // Matikan pause
+            winCondition = false; // Reset menang
+            score = 0; // Skor 0
+            lives = 3; // Nyawa 3
+            bossLevel = 0; // Boss level 0
+            speedLevel = 1; // Speed level 1
+            currentShootDelay = 6; // Delay awal
+            bullets = []; // Kosongkan peluru
+            enemies = []; // Kosongkan musuh
+            bossBullets = []; // Kosongkan peluru boss
+            explosions = []; // Kosongkan ledakan
+            boss = null; // Hapus boss
+            bossActive = false; // Boss tidak aktif
+            bossSpawnTriggered = false; // Spawn boss belum terpicu
+            bossWarningActive = false; // Peringatan tidak aktif
+            bossWarningTimer = 0; // Timer 0
+            isBossFight = false; // Bukan boss fight
+            autoShootCounter = 0; // Counter auto shoot 0
+            enemySpawnCounter = 0; // Counter spawn musuh 0
+            playerX = CW/2 - PLAYER_WIDTH/2; // Posisi pemain tengah
+            playerY = CH - 60; // Posisi Y pemain
+            leftPressed = false; // Tidak ada input
+            rightPressed = false; // Tidak ada input
+            isDragging = false; // Tidak drag
+            updateShootSpeed(); // Update tampilan speed
+            document.getElementById('scoreValue').innerText = "0"; // Reset tampilan skor
+            document.getElementById('livesValue').innerText = "3"; // Reset tampilan nyawa
+            document.getElementById('bossHpValue').innerHTML = '-'; // Reset tampilan HP boss
+            setStatusMsg("🔄 Game direset! Mulai bertempur!", 1500); // Pesan
+        } // Akhir fungsi
+        
+        function backToMainMenu() { // Kembali ke menu utama
+            if(animationId) { // Jika ada animasi berjalan
+                cancelAnimationFrame(animationId); // Hentikan
+                animationId = null; // Kosongkan
+            } // Akhir if
+            gameWrapper.style.display = 'none'; // Sembunyikan game
+            mainMenu.style.display = 'flex'; // Tampilkan menu
+            resetGame(); // Reset game
+        } // Akhir fungsi
+        
+        function startGame() { // Mulai game dari menu
+            resetGame(); // Reset dulu
+            mainMenu.style.display = 'none'; // Sembunyikan menu
+            gameWrapper.style.display = 'inline-block'; // Tampilkan game
+            if(!animationId) { // Jika belum ada loop
+                function loop() { // Fungsi loop game
+                    updateGameLogic(); // Update logika
+                    draw(); // Render
+                    animationId = requestAnimationFrame(loop); // Minta frame selanjutnya
+                } // Akhir loop
+                loop(); // Jalankan loop
+            } // Akhir if
+        } // Akhir fungsi
+        
+        function togglePause() { // Toggle pause/resume
+            if(!gameActive || winCondition) return; // Hanya jika game aktif & belum menang
+            isPaused = !isPaused; // Toggle
+            setStatusMsg(isPaused ? "⏸️ GAME PAUSED" : "▶️ GAME RESUME", 1000); // Pesan
+        } // Akhir fungsi
+        
+        // ========== EVENT LISTENER ==========
+        document.addEventListener('keydown', (e) => { // Event keyboard ditekan
+            if(gameWrapper.style.display !== 'inline-block') return; // Abaikan jika bukan game
+            if(e.key === 'ArrowLeft') { leftPressed = true; e.preventDefault(); } // Kiri ditekan
+            if(e.key === 'ArrowRight') { rightPressed = true; e.preventDefault(); } // Kanan ditekan
+        }); // Akhir event
+        
+        document.addEventListener('keyup', (e) => { // Event keyboard dilepas
+            if(e.key === 'ArrowLeft') { leftPressed = false; e.preventDefault(); } // Kiri lepas
+            if(e.key === 'ArrowRight') { rightPressed = false; e.preventDefault(); } // Kanan lepas
+        }); // Akhir event
+        
+        const leftBtn = document.getElementById('arrowLeftBtn'); // Ambil tombol kiri
+        const rightBtn = document.getElementById('arrowRightBtn'); // Ambil tombol kanan
+        if(leftBtn) { // Jika ada tombol kiri
+            leftBtn.addEventListener('mousedown', (e) => { e.preventDefault(); leftPressed = true; }); // Mouse tekan
+            leftBtn.addEventListener('mouseup', () => leftPressed = false); // Mouse lepas
+            leftBtn.addEventListener('mouseleave', () => leftPressed = false); // Mouse keluar area
+            leftBtn.addEventListener('touchstart', (e) => { e.preventDefault(); leftPressed = true; }); // Sentuh mulai
+            leftBtn.addEventListener('touchend', () => leftPressed = false); // Sentuh selesai
+        } // Akhir if
+        if(rightBtn) { // Jika ada tombol kanan
+            rightBtn.addEventListener('mousedown', (e) => { e.preventDefault(); rightPressed = true; }); // Mouse tekan
+            rightBtn.addEventListener('mouseup', () => rightPressed = false); // Mouse lepas
+            rightBtn.addEventListener('mouseleave', () => rightPressed = false); // Mouse keluar
+            rightBtn.addEventListener('touchstart', (e) => { e.preventDefault(); rightPressed = true; }); // Sentuh
+            rightBtn.addEventListener('touchend', () => rightPressed = false); // Sentuh lepas
+        } // Akhir if
+        
+        function startDrag(e) { // Mulai drag pada canvas
+            if(gameWrapper.style.display !== 'inline-block') return; // Hanya dalam game
+            e.preventDefault(); // Cegah default
+            isDragging = true; // Set dragging
+            dragClientX = e.touches ? e.touches[0].clientX : e.clientX; // Simpan posisi X
+        } // Akhir fungsi
+        function onDrag(e) { // Sedang drag
+            if(!isDragging || gameWrapper.style.display !== 'inline-block') return; // Abaikan jika tidak drag
+            e.preventDefault(); // Cegah default
+            dragClientX = e.touches ? e.touches[0].clientX : e.clientX; // Update posisi
+        } // Akhir fungsi
+        function endDrag(e) { // Akhiri drag
+            isDragging = false; // Matikan flag
+            e.preventDefault(); // Cegah default
+        } // Akhir fungsi
+        canvas.addEventListener('touchstart', startDrag, { passive: false }); // Pasang event touchstart
+        canvas.addEventListener('touchmove', onDrag, { passive: false }); // touchmove
+        canvas.addEventListener('touchend', endDrag); // touchend
+        canvas.addEventListener('mousedown', startDrag); // mousedown
+        window.addEventListener('mousemove', (e) => { if(isDragging) onDrag(e); }); // mousemove global
+        window.addEventListener('mouseup', endDrag); // mouseup
+        
+        const pauseBtn = document.getElementById('pauseBtn'); // Tombol pause
+        const restartBtn = document.getElementById('restartBtn'); // Tombol restart
+        const menuBtn = document.getElementById('menuBtn'); // Tombol menu
+        if(pauseBtn) pauseBtn.addEventListener('click', togglePause); // Pasang event pause
+        if(restartBtn) restartBtn.addEventListener('click', () => resetGame()); // Pasang event restart
+        if(menuBtn) menuBtn.addEventListener('click', () => backToMainMenu()); // Pasang event menu
+        startBtn.addEventListener('click', startGame); // Tombol mulai dari menu
+        
+        resetGame(); // Reset game awal (tampil menu)
+    })(); // Akhir IIFE
+</script>   <!-- Penutup script -->
+</body> <!-- Penutup body -->
+</html> <!-- Penutup html -->
